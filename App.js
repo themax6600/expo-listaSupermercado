@@ -15,22 +15,27 @@ const App = () => {
     loadItems();
   }, []);
 
-
-
-
-
   const addItem = async () => {
-    if (item.trim()) {
-      const newItems = [...items, item];
+    if (item.trim() && categoria.trim()) {
+      const newitem = { nome: item.trim(), categoria: categoria.trim() };
+      const newItems = [...items, newitem];
       setItems(newItems);
       setItem('');
+      setCategoria('');
       await AsyncStorage.setItem('supermarketList', JSON.stringify(newItems));
+
+
     } else {
       Alert.alert("Lista vazia");
     }
   }
+
   const [item, setItem] = useState('');
   const [items, setItems] = useState([]);
+
+  const [categoria, setCategoria] = useState('');
+
+
 
   const removerItem = async (index) => {
     const newItems = items.filter((_, i) => i !== index);
@@ -57,7 +62,8 @@ const App = () => {
 
   const renderItem = ({ item, index }) => (
     <View style={styles.item}>
-      <Text>{item}</Text>
+      <Text>{item.nome}</Text>
+      <Text>{item.categoria}</Text>
       <TouchableOpacity onPress={() => removerItem(index)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>Remover</Text>
       </TouchableOpacity>
@@ -72,14 +78,21 @@ const App = () => {
           value={item}
           onChangeText={setItem}
         />
-        <TouchableOpacity style={styles.categoria}>
-          <Text>alimento</Text>
-        </TouchableOpacity>
+        <TextInput
+          style={styles.input} placeholder="Categoria do produto"
+          value={categoria}
+          onChangeText={setCategoria}
+        />
       </View>
       <Button title="Adicionar" onPress={addItem} />
-      <TouchableOpacity onPress={() => removerAllitems()} style={styles.removeAllbutton}>
-        <Text style={styles.removeButtonText}>Remover Todos os items</Text>
-      </TouchableOpacity>
+      <View style={styles.caixa2}>
+        <TouchableOpacity onPress={() => removerAllitems()} style={styles.removeAllbutton}>
+          <Text style={styles.removeButtonText}>Remover Todos os items</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => filtro()} style={styles.filterButton}>
+          <Text style={styles.removeButtonText}>Filtrar Items</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={items}
         renderItem={renderItem}
@@ -104,7 +117,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 10,
-    width: 200,
+    margin: 10,
   },
   item: {
     flexDirection: 'row',
@@ -127,17 +140,24 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 10,
     marginBottom: 10,
-    width: 150,
+  },
+  filterButton: {
+    backgroundColor: '#5656',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
   numeroArray: {
     borderWidth: 1,
     padding: 3,
   },
   caixa1: {
+    marginBottom: 10,
+  },
+  caixa2:{
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
   },
   categoria: {
     display: 'flex',
